@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 import React from 'react';
 import moment from 'moment-hijri';
-import Image from 'next/image';
+import { FaWhatsapp, FaTwitter, FaInstagram, FaPhone, FaEnvelope, FaArrowLeft, FaArrowRight, FaFilePdf, FaCalendarAlt } from 'react-icons/fa';
 
 
 
@@ -119,12 +119,86 @@ export default function Home() {
 
 
     return (
-        <div>
-            <img src={`hijri/pages/${currentPage.toString().padStart(3, 0)}`} />
-            <div className='flex gap-4'>
-                {currentPage < lastPage && <button onClick={nextPage}>التالي</button>}
-                {currentPage > 1 && <button onClick={previousPage}>السابق</button>}
-            </div>
+        <div className='root-bg min-h-screen flex flex-col gap-5'>
+            <header className='mb-4 container mx-auto px-4 py-2 '>
+                <div className='flex items-center gap-4'>
+                    <img height="200" src="http://localhost:3000/hijri/logo.svg" title="حكومة الشارقة" />
+                    <div>
+                        <h1 className='text-xl font-bold'>التقويم الهجري ١٤٤٥</h1>
+                        <p className='text-lg'>دائرة الشؤون الإسلامية بالشارقة</p>
+                    </div>
+                </div>
+            </header>
+            <main className='grow container mx-auto px-4 flex flex-col gap-5'>
+                <div className='flex flex-col gap-2.5 items-center justify-center'>
+                    <div className='border drop-shadow'>
+                        <img src={`hijri/pages/${currentPage.toString().padStart(3, 0)}`} />
+                    </div>
+                    <div className=' flex  flex-col w-full gap-3'>
+
+
+                        <div className='flex justify-between gap-4'>
+                            <div>
+                                {currentPage > 1 && <button className='flex items-center py-2 justify-center rounded w-16 gap-2  w-100 bg-red-100' onClick={previousPage}
+                                >
+                                    <FaArrowRight />
+                                    السابق</button>}
+                            </div>
+                            <div>
+                                <button className='flex items-center py-2 justify-center rounded w-28 gap-2 overflow-hidden bg-red-100'>
+                                    <FaCalendarAlt />
+                                    الإنتقال السريع
+
+                                </button>
+                            </div>
+                            <div>
+                                {currentPage < lastPage && <button className='flex items-center py-2 rounded justify-center bg-red-900 w-16 gap-2 text-white' onClick={nextPage}
+                                >
+                                    التالي
+                                    <FaArrowLeft />
+                                </button>}
+                            </div>
+                        </div>
+                        <div>
+                            <a className="flex gap-2 bg-blue-800 items-center justify-center text-white rounded shadow px-4 py-2 text-bold" href="#">
+                                <FaFilePdf />
+                                تحميل التقويم الهجري</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <h2>العطلات الرسمية والمناسبات الدينية الوطنية</h2>
+                </div>
+            </main>
+            <footer className='container mx-auto px-4 w-full flex gap-4 flex-col'>
+                <div className='flex flex-col gap-1.5 text-sm'>
+                    <div className='flex items-center gap-1'>
+                        <FaWhatsapp />
+                        0561888292
+                    </div>
+                    <div className='flex items-center gap-1'>
+                        <div className='flex items-center gap-1'>
+                            <FaTwitter />
+                            <FaInstagram />
+                        </div>
+                        islamic_affairs
+                    </div>
+                    <div className='flex items-center gap-1'>
+                        <FaPhone />
+                        06 505 5888
+                    </div>
+                    <div className='flex items-center gap-1'>
+                        <FaEnvelope />
+                        info@sia.gov.ae
+                    </div>
+                </div>
+
+                <div className='flex gap-4 justify-center'>
+                    <div>الرقم المجاني 80017</div>
+                    <div>الفتاوي 8001441</div>
+                </div>
+            </footer>
         </div>
     );
 }
