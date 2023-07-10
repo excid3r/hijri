@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 
 import React from 'react';
 import moment from 'moment-hijri';
+import Image from 'next/image';
 
 
 
@@ -119,7 +120,7 @@ export default function Home() {
 
     return (
         <div>
-            <img src={`/hijri/pages/${currentPage.toString().padStart(3, 0)}`} />
+            <img src={`hijri/pages/${currentPage.toString().padStart(3, 0)}`} />
             <div className='flex gap-4'>
                 {currentPage < lastPage && <button onClick={nextPage}>التالي</button>}
                 {currentPage > 1 && <button onClick={previousPage}>السابق</button>}
