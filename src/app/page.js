@@ -1,5 +1,6 @@
 'use client'
 import { useEffect, useState } from 'react';
+import Image from 'next/image'
 
 import React from 'react';
 import moment from 'moment-hijri';
@@ -61,29 +62,29 @@ const pageIndex = {
 };
 
 
-function Calendar({visible, setVisible, setCurrentPage}) {
+function Calendar({ visible, setVisible, setCurrentPage }) {
     return <>
         <div className={`${visible ? "block" : "hidden"} fixed w-full backdrop-blur-sm bg-white/30 h-full z-50 flex items-center justify-center`}>
-            
+
             <div className='bg-white p-4 shadow flex flex-col gap-2'>
                 <div className='flex'>
-                <p>الرجاء إختيار الشهر</p>
-                <div className='text-2xl mr-auto'>
-                    <button onClick={()=>{
-                        setVisible(!visible)
-                    }}><FaTimes/></button>
+                    <p>الرجاء إختيار الشهر</p>
+                    <div className='text-2xl mr-auto'>
+                        <button onClick={() => {
+                            setVisible(!visible)
+                        }}><FaTimes /></button>
                     </div>
                 </div>
                 <ul className='grid grid-cols-4 gap-3'>
                     {months.map((month, index) => {
                         return <li key={index}>
-                            <button onClick={()=>{
+                            <button onClick={() => {
                                 setCurrentPage(pageIndex[month])
                                 setVisible(!visible);
                             }} className='bg-blue-200 p-2 rounded-full h-20 w-20'>
                                 {index + 1} - {month}
-                                </button>
-                            </li>
+                            </button>
+                        </li>
                     })}
                 </ul>
             </div>
@@ -97,8 +98,8 @@ export default function Home() {
     const hijirMonth = getHijriMonth(currentDate);
     const hijriDay = getHijriDay(currentDate)
     // const [currentPage, setCurrentPage] = useState(pageIndex[hijirMonth] + hijriDay);
-        const [currentPage, setCurrentPage] = useState(1);
-    const [visible, setVisible] = useState(false); 
+    const [currentPage, setCurrentPage] = useState(1);
+    const [visible, setVisible] = useState(false);
     const previousPage = () => {
         setCurrentPage(currentPage - 1);
     };
@@ -110,28 +111,20 @@ export default function Home() {
 
 
     return (
-        <div className='root-bg min-h-screen flex flex-col gap-5'>
-            <Calendar visible={visible} setCurrentPage={setCurrentPage} setVisible={setVisible} />
-            <header className='mb-4 container mx-auto px-4 py-2 '>
-                <div className='flex items-center gap-4'>
-                    <img height="200" src="http://localhost:3000/hijri/logo.svg" title="حكومة الشارقة" />
-                    <div>
-                        <h1 className='text-xl font-bold'>التقويم الهجري ١٤٤٥</h1>
-                        <p className='text-lg'>دائرة الشؤون الإسلامية بالشارقة</p>
+        <div className='min-h-screen flex flex-col container mx-auto'>
+            <Calendar visible={visible} setVisible={setVisible} setCurrentPage={setCurrentPage}/>
+            <Image src="/hijri/header.png" width={1536} height={997} />
+            <div className='relative overflow-hidden'>
+                <div className='absolute top-0 right-0 h-full w-full'>
+                    <div className='flex flex-col items-center  h-full w-full justify-center'>
+                        <img className='border shadow flex h-32 w-32 items-center justify-center' title="page" src={`hijri/pages/${currentPage.toString().padStart(3, 0)}`} />
                     </div>
                 </div>
-            </header>
-            <main className='grow container mx-auto px-4 flex flex-col gap-5'>
-                <div className='flex flex-col gap-2.5 items-center justify-center'>
-                    <div className='border drop-shadow'>
-                        <img title="page" src={`hijri/pages/${currentPage.toString().padStart(3, 0)}`} />
-                    </div>
-                    <div className=' flex  flex-col w-full gap-3'>
-
-
-                        <div className='flex justify-between gap-4'>
+                <Image src="/hijri/body.png" width={1536} height={721} />
+            </div>
+            <div className='flex justify-between gap-2'>
                             <div>
-                                {currentPage > 1 && <button className='flex items-center py-2 justify-center rounded w-16 gap-2  w-100 bg-red-100' onClick={previousPage}
+                                {currentPage > 1 && <button className='flex items-center py-2 justify-center rounded w-16 gap-2  w-100 bg-red-100' style={{fontSize: "12px"}} onClick={previousPage}
                                 >
                                     <FaArrowRight />
                                     السابق</button>}
@@ -153,89 +146,8 @@ export default function Home() {
                                 </button>}
                             </div>
                         </div>
-                        <div>
-                            <a className="flex gap-2 bg-blue-800 items-center justify-center text-white rounded shadow px-4 py-2 text-bold" href="#">
-                                <FaFilePdf />
-                                تحميل التقويم الهجري</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div>
-                    <h2 className='text-xl'>العطلات الرسمية والمناسبات الدينية الوطنية</h2>
-                    <div>-</div>
-                    <div>-</div>
-                    <div>-</div>
-                    <div>-</div>
-                    <div>-</div>
-                    <div>-</div>
-                </div>
-
-                <div>
-                    <h1 className='text-xl'>تغير الصفحة بالضغط على التاريخ</h1>
-                    <div className='flex flex-col gap-4'>
-                    {months.map((month, index) => {
-                        const calendar = [];
-                        const startDate = moment(`1445/${index + 1}/1`, 'iYYYY/iM/iD')
-                            .clone()
-                            .startOf("iMonth");
-                        const endDate = startDate
-                            .clone()
-                            .endOf("iMonth");
-                        const day = startDate.clone().subtract(1, "day");
-                        while (day.isBefore(endDate, "day")) {
-                            const date = day.add(1, "day").clone();
-                            const dow = date.day();
-                            const formatedDate = date.format('iYYYY/iM/iD - YYYY/M/D')
-                            calendar.push((<div key={formatedDate}>
-                                <button onClick={() => {
-                                    const hijirMonth = month;
-                                    const hijriDay = date.iDate() - 1;
-                                    setCurrentPage(pageIndex[hijirMonth] + hijriDay);
-                                    window.scrollTo(0, 0)
-                                }}>
-                                    {formatedDate}
-                                </button></div>))
-                        }
-
-                        return <div key={index + 1}>
-                            <h2 className='text-lg mb-2'>{index + 1} - {month} </h2>
-
-
-                            <div className='flex flex-col gap-2'>{calendar}</div>
-                        </div>
-                    })}
-                    </div>
-                </div>
-            </main>
-            <footer className='container mx-auto px-4 w-full flex gap-4 flex-col'>
-                <div className='flex flex-col gap-1.5 text-sm'>
-                    <div className='flex items-center gap-1'>
-                        <FaWhatsapp />
-                        0561888292
-                    </div>
-                    <div className='flex items-center gap-1'>
-                        <div className='flex items-center gap-1'>
-                            <FaTwitter />
-                            <FaInstagram />
-                        </div>
-                        islamic_affairs
-                    </div>
-                    <div className='flex items-center gap-1'>
-                        <FaPhone />
-                        06 505 5888
-                    </div>
-                    <div className='flex items-center gap-1'>
-                        <FaEnvelope />
-                        info@sia.gov.ae
-                    </div>
-                </div>
-
-                <div className='flex gap-4 justify-center'>
-                    <div>الرقم المجاني 80017</div>
-                    <div>الفتاوي 8001441</div>
-                </div>
-            </footer>
+            <Image src="/hijri/footer.png" width={1536} height={165} />
+            
         </div>
     );
 }
