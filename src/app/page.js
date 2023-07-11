@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 
 import React from 'react';
 import moment from 'moment-hijri';
-import { FaWhatsapp, FaTwitter, FaInstagram, FaPhone, FaEnvelope, FaArrowLeft, FaArrowRight, FaFilePdf, FaCalendarAlt } from 'react-icons/fa';
+import { FaWhatsapp, FaTwitter, FaTimes, FaInstagram, FaPhone, FaEnvelope, FaArrowLeft, FaArrowRight, FaFilePdf, FaCalendarAlt } from 'react-icons/fa';
 
 
 
@@ -12,9 +12,9 @@ const months = [
     "محرم",
     "صفر",
     "ربيع الأول",
-    "ربيع الثاني",
+    "ربيع الآخر",
     "جمادى الأولى",
-    "جمادى الآخرة",
+    "جمادي الآخرة",
     "رجب",
     "شعبان",
     "رمضان",
@@ -22,52 +22,12 @@ const months = [
     "ذو القعدة",
     "ذو الحجة"
 ]
+
 const weekdays = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
 
 
 
-// const moment1 = moment('1410/8/28', 'iYYYY/iM/iD');
-var calendar = [];
-const startDate = moment('1444/1/1', 'iYYYY/iM/iD')
-    .clone()
-    .startOf("iMonth")
-    .subtract(6, "day")
-console.log(startDate);
-const endDate = startDate
-    .clone()
-    .endOf("iMonth")
-const day = startDate.clone().subtract(1, "day");
-while (day.isBefore(endDate, "day")) {
-    console.log("zg")
-    // const date = day.add(1, "day").clone();
-    // const dow = date.day();
-    // const array = [];
-    // array[dow] = date.format.format("DD")
-    // const date  = day.add(1, "day").clone();
-    //     const dow = date.day();
-    // const arr = Array(7)
-    // .fill(0);
-    // arr[dow] = date.format("iDD")
-    // console.log(arr)
-    calendar.push(
-        Array(7)
-            .fill(0)
-            .map((index) => {
-                const date = day.add(1, "day").clone();
-                const dow = date.day();
-                console.log(dow)
-                return date.format("iDD")
-            }
-            )
-    );
-    // Array(7)
-    //     .fill(0).map
-    // for (let i = 0; i < 7; i++) {
-    //     console.log(i)
-    //   } 
 
-}
-console.log(calendar)
 
 
 const getHijriMonth = (date) => {
@@ -85,29 +45,60 @@ const getHijriDay = (data) => {
 
     return parseInt(hijriDay);
 };
-const index = {
+const pageIndex = {
     "محرم": 4,
-    "صفر": 35,
+    "صفر": 36,
     "ربيع الأول": 67,
     "ربيع الآخر": 99,
-    "جمادي الأولى": 130,
+    "جمادى الأولى": 131,
     "جمادي الآخرة": 162,
-    "رجب": 193,
-    "شعبان": 224,
-    "رمضان": 256,
+    "رجب": 194,
+    "شعبان": 225,
+    "رمضان": 257,
     "شوال": 288,
-    "ذو القعدة": 320,
-    "ذو الحجة": 350
+    "ذو القعدة": 319,
+    "ذو الحجة": 351
 };
 
+
+function Calendar({visible, setVisible, setCurrentPage}) {
+    return <>
+        <div className={`${visible ? "block" : "hidden"} fixed w-full backdrop-blur-sm bg-white/30 h-full z-50 flex items-center justify-center`}>
+            
+            <div className='bg-white p-4 shadow flex flex-col gap-2'>
+                <div className='flex'>
+                <p>الرجاء إختيار الشهر</p>
+                <div className='text-2xl mr-auto'>
+                    <button onClick={()=>{
+                        setVisible(!visible)
+                    }}><FaTimes/></button>
+                    </div>
+                </div>
+                <ul className='grid grid-cols-4 gap-3'>
+                    {months.map((month, index) => {
+                        return <li key={index}>
+                            <button onClick={()=>{
+                                setCurrentPage(pageIndex[month])
+                                setVisible(!visible);
+                            }} className='bg-blue-200 p-2 rounded-full h-20 w-20'>
+                                {index + 1} - {month}
+                                </button>
+                            </li>
+                    })}
+                </ul>
+            </div>
+        </div>
+    </>
+}
 export default function Home() {
 
     const [currentDate, setCurrentDate] = useState(new Date());
-    const lastPage = 380;
+    const lastPage = 379;
     const hijirMonth = getHijriMonth(currentDate);
     const hijriDay = getHijriDay(currentDate)
-    const [currentPage, setCurrentPage] = useState(index[hijirMonth] + hijriDay);
-
+    // const [currentPage, setCurrentPage] = useState(pageIndex[hijirMonth] + hijriDay);
+        const [currentPage, setCurrentPage] = useState(1);
+    const [visible, setVisible] = useState(false); 
     const previousPage = () => {
         setCurrentPage(currentPage - 1);
     };
@@ -120,6 +111,7 @@ export default function Home() {
 
     return (
         <div className='root-bg min-h-screen flex flex-col gap-5'>
+            <Calendar visible={visible} setCurrentPage={setCurrentPage} setVisible={setVisible} />
             <header className='mb-4 container mx-auto px-4 py-2 '>
                 <div className='flex items-center gap-4'>
                     <img height="200" src="http://localhost:3000/hijri/logo.svg" title="حكومة الشارقة" />
@@ -132,7 +124,7 @@ export default function Home() {
             <main className='grow container mx-auto px-4 flex flex-col gap-5'>
                 <div className='flex flex-col gap-2.5 items-center justify-center'>
                     <div className='border drop-shadow'>
-                        <img src={`hijri/pages/${currentPage.toString().padStart(3, 0)}`} />
+                        <img title="page" src={`hijri/pages/${currentPage.toString().padStart(3, 0)}`} />
                     </div>
                     <div className=' flex  flex-col w-full gap-3'>
 
@@ -145,7 +137,9 @@ export default function Home() {
                                     السابق</button>}
                             </div>
                             <div>
-                                <button className='flex items-center py-2 justify-center rounded w-28 gap-2 overflow-hidden bg-red-100'>
+                                <button onClick={()=>{
+                                    setVisible(!visible);
+                                }} className='flex items-center py-2 justify-center rounded w-28 gap-2 overflow-hidden bg-red-100'>
                                     <FaCalendarAlt />
                                     الإنتقال السريع
 
@@ -168,7 +162,50 @@ export default function Home() {
                 </div>
 
                 <div>
-                    <h2>العطلات الرسمية والمناسبات الدينية الوطنية</h2>
+                    <h2 className='text-xl'>العطلات الرسمية والمناسبات الدينية الوطنية</h2>
+                    <div>-</div>
+                    <div>-</div>
+                    <div>-</div>
+                    <div>-</div>
+                    <div>-</div>
+                    <div>-</div>
+                </div>
+
+                <div>
+                    <h1 className='text-xl'>تغير الصفحة بالضغط على التاريخ</h1>
+                    <div className='flex flex-col gap-4'>
+                    {months.map((month, index) => {
+                        const calendar = [];
+                        const startDate = moment(`1445/${index + 1}/1`, 'iYYYY/iM/iD')
+                            .clone()
+                            .startOf("iMonth");
+                        const endDate = startDate
+                            .clone()
+                            .endOf("iMonth");
+                        const day = startDate.clone().subtract(1, "day");
+                        while (day.isBefore(endDate, "day")) {
+                            const date = day.add(1, "day").clone();
+                            const dow = date.day();
+                            const formatedDate = date.format('iYYYY/iM/iD - YYYY/M/D')
+                            calendar.push((<div key={formatedDate}>
+                                <button onClick={() => {
+                                    const hijirMonth = month;
+                                    const hijriDay = date.iDate() - 1;
+                                    setCurrentPage(pageIndex[hijirMonth] + hijriDay);
+                                    window.scrollTo(0, 0)
+                                }}>
+                                    {formatedDate}
+                                </button></div>))
+                        }
+
+                        return <div key={index + 1}>
+                            <h2 className='text-lg mb-2'>{index + 1} - {month} </h2>
+
+
+                            <div className='flex flex-col gap-2'>{calendar}</div>
+                        </div>
+                    })}
+                    </div>
                 </div>
             </main>
             <footer className='container mx-auto px-4 w-full flex gap-4 flex-col'>
