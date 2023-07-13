@@ -115,10 +115,10 @@ export default function Home() {
             <header className='px-4 py-8'>
                 <div className='flex flex-col items-center gap-4'>
                     <div>
-                        <Image width="80" height="541" src="/hijri/logo1.png" />
+                        <Image width="80" alt="دائرة الشؤون الإسلامية" height="541" src="/hijri/logo1.png" />
                     </div>
                     <div>
-                        <Image src="/hijri/app-logo.png" width="150" height="300" />
+                        <Image src="/hijri/app-logo.png" alt="التقويم الهجري ١٥٥٥" width="150" height="300" />
                     </div>
                 </div>
             </header>
@@ -131,18 +131,18 @@ export default function Home() {
                             "ربيع الأول",
                             "ربيع الآخر",
                             "جمادى الأولى",
-                            "جمادي الآخرة"].map((month) => {
-                                return <button onClick={() => {
+                            "جمادي الآخرة"].map((month, index) => {
+                                return <button key={index} onClick={() => {
                                     setCurrentPage(pageIndex[month])
                                 }} className='relative'>
-                                    <Image src="/hijri/border.png" width="229" height="140" />
+                                    <Image src="/hijri/border.png" alt={month} width="229" height="140" />
                                     <p className='text-sm text-center absloute right-0 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>{month}</p>
                                 </button>
                             })}
 
                     </div>
                     <div className='flex flex-col justify-center'>
-                        <img className='border w-full shadow flex items-center justify-center' title="page" src={`hijri/pages/${currentPage.toString().padStart(3, 0)}`} />
+                        <img className='border w-full shadow flex items-center justify-center' alt="page" src={`hijri/pages/${currentPage.toString().padStart(3, 0)}`} />
                     </div>
                     <div className=''>
                         <div className=' flex flex-col gap-2 justify-center'>
@@ -152,11 +152,11 @@ export default function Home() {
                                 "رمضان",
                                 "شوال",
                                 "ذو القعدة",
-                                "ذو الحجة"].map((month) => {
-                                    return <button onClick={() => {
+                                "ذو الحجة"].map((month, index) => {
+                                    return <button key={index} onClick={() => {
                                         setCurrentPage(pageIndex[month])
-                                    }} className='relative'>
-                                        <Image src="/hijri/border.png" width="229" height="140" />
+                                    }} className='relative' >
+                                        <Image src="/hijri/border.png" alt={month} width="229" height="140" />
                                         <p className='text-sm text-center absloute right-0 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>{month}</p>
                                     </button>
                                 })}
@@ -193,7 +193,7 @@ export default function Home() {
 
             </main>
             <footer className='px-4'>
-                <Image src="/hijri/last.png" width="1885" height="150" />
+                <Image src="/hijri/last.png" alt='معلومات الدائرة وأرقام التواصل' width="1885" height="150" />
             </footer>
             {/* <Calendar visible={visible} setVisible={setVisible} setCurrentPage={setCurrentPage} /> */}
             {/* <div className='relative overflow-hidden'>
