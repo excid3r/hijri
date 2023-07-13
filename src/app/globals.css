@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+
+.background {
+    background-image: url('/hijri/background.png');
+    background-size:  1536px;
+}
 .root-bg {
     background-color: #d6e4f1;
 }
