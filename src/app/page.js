@@ -41,24 +41,23 @@ const getHijriMonth = (date) => {
 
 const getHijriDay = (data) => {
     const hijriDay = data.toLocaleString('en-US-u-ca-islamic', {
-        day: 'numeric',
+        day: 'numeric', month: 'long',weekday: 'long',year : 'numeric'
     });
-
     return parseInt(hijriDay);
 };
 const pageIndex = {
-    "محرم": 4,
-    "صفر": 36,
-    "ربيع الأول": 67,
-    "ربيع الآخر": 99,
-    "جمادى الأولى": 131,
-    "جمادي الآخرة": 162,
-    "رجب": 194,
-    "شعبان": 225,
-    "رمضان": 257,
-    "شوال": 288,
-    "ذو القعدة": 319,
-    "ذو الحجة": 351
+    "محرم": 3,
+    "صفر": 35,
+    "ربيع الأول": 66,
+    "ربيع الآخر": 98,
+    "جمادى الأولى": 130,
+    "جمادي الآخرة": 161,
+    "رجب": 193,
+    "شعبان": 224,
+    "رمضان": 256,
+    "شوال": 287,
+    "ذو القعدة": 318,
+    "ذو الحجة": 350
 };
 
 
@@ -93,12 +92,11 @@ function Calendar({ visible, setVisible, setCurrentPage }) {
 }
 export default function Home() {
 
-    const [currentDate, setCurrentDate] = useState(new Date());
+    const [currentDate, setCurrentDate] = useState(new Date("2023-07-20"));
     const lastPage = 379;
     const hijirMonth = getHijriMonth(currentDate);
-    const hijriDay = getHijriDay(currentDate)
-    // const [currentPage, setCurrentPage] = useState(pageIndex[hijirMonth] + hijriDay);
-    const [currentPage, setCurrentPage] = useState(1);
+    const hijriDay = moment().iDate()
+    const [currentPage, setCurrentPage] = useState(pageIndex[hijirMonth] + hijriDay);
     const [visible, setVisible] = useState(false);
     const previousPage = () => {
         setCurrentPage(currentPage - 1);
@@ -142,7 +140,7 @@ export default function Home() {
 
                     </div>
                     <div className='flex flex-col justify-center'>
-                        <img className='border w-full shadow flex items-center justify-center' alt="page" src={`hijri/pages/${currentPage.toString().padStart(3, 0)}`} />
+                        <img width="667px" height="785px" className='border w-full shadow flex items-center justify-center' alt="page" src={`hijri/pages/${currentPage.toString().padStart(3, 0)}`} />
                     </div>
                     <div className=''>
                         <div className=' flex flex-col gap-2 justify-center'>
@@ -157,7 +155,7 @@ export default function Home() {
                                         setCurrentPage(pageIndex[month])
                                     }} className='relative' >
                                         <Image src="/hijri/border.png" alt={month} width="229" height="140" />
-                                        <p className='text-sm text-center absloute right-0 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>{month}</p>
+                                        <p className='text-sm text-center absloute right-0 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 '>{month}</p>
                                     </button>
                                 })}
 
