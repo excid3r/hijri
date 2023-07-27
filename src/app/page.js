@@ -86,26 +86,50 @@ function Calendar({ visible, setVisible, setCurrentPage }) {
     </>
 }
 export default function Home() {
-    const [currentDate, setCurrentDate] = useState(new Date("2023-07-20"));
+    const [currentDate, setCurrentDate] = useState(new Date());
     const [initlize, setInitlize] = useState(true)
     const lastPage = 379;
     const [currentPage, setCurrentPage] = useState(1);
     const [visible, setVisible] = useState(false);
+    const [hijirMonth, setHijirMonth] = useState(getHijriMonth(currentDate))
     useEffect(() => {
         if (initlize) {
-            const hijirMonth = getHijriMonth(currentDate);
+            const currentHijriMonth = getHijriMonth(currentDate);
+            setHijirMonth(currentHijriMonth);
             const hijriDay = moment().iDate()
             setCurrentPage(pageIndex[hijirMonth] + hijriDay)
             setInitlize(false)
         }
 
     })
+
+    function getMonthName(numberPage) {
+        for (const month in pageIndex) {
+            const pageStart = pageIndex[month];
+            const nextPageStart = pageIndex[Object.keys(pageIndex)[Object.keys(pageIndex).indexOf(month) + 1]];
+    
+            if (numberPage >= pageStart && numberPage < nextPageStart) {
+                return month;
+            }
+        }
+        
+        return "Unknown"; // If numberPage is not within any known month range
+    }
+
     const previousPage = () => {
         setCurrentPage(currentPage - 1);
+        setHijirMonth(getMonthName(currentPage-1))
     };
+    const currentDatePage = () => {
+        const currentHijriMonth = getHijriMonth(new Date());
+        setHijirMonth(currentHijriMonth);
+        const hijriDay = moment().iDate()
+        setCurrentPage(pageIndex[currentHijriMonth] + hijriDay)
+    }
 
     const nextPage = () => {
         setCurrentPage(currentPage + 1);
+        setHijirMonth(getMonthName(currentPage+1))
     };
 
 
@@ -134,9 +158,10 @@ export default function Home() {
                             "جمادي الآخرة"].map((month, index) => {
                                 return <button key={index} onClick={() => {
                                     setCurrentPage(pageIndex[month]+1)
+                                    setHijirMonth(getMonthName(pageIndex[month]+1))
                                 }} className='relative'>
-                                    <Image src="/hijri/border.png" alt={month} width="229" height="140" />
-                                    <p className='text-sm text-center absloute right-0 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>{month}</p>
+                                    <Image src={`/hijri/border${month === hijirMonth ? "_active":''}.png`} alt={month} width="229" height="140" />
+                                    <p className={`text-sm text-center absloute right-0 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${month === hijirMonth ? "text-red-500" : ''}`}>{month}</p>
                                 </button>
                             })}
 
@@ -155,9 +180,10 @@ export default function Home() {
                                 "ذو الحجة"].map((month, index) => {
                                     return <button key={index} onClick={() => {
                                         setCurrentPage(pageIndex[month] + 1)
+                                        setHijirMonth(getMonthName(pageIndex[month]+1))
                                     }} className='relative' >
-                                        <Image src="/hijri/border.png" alt={month} width="229" height="140" />
-                                        <p className='text-sm text-center absloute right-0 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 '>{month}</p>
+                                    <Image src={`/hijri/border${month === hijirMonth ? "_active":''}.png`} alt={month} width="229" height="140" />
+                                    <p className={`text-sm text-center absloute right-0 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${month === hijirMonth ? "text-red-500" : ''}`}>{month}</p>
                                     </button>
                                 })}
 
@@ -171,6 +197,12 @@ export default function Home() {
                         >
                             <FaArrowRight />
                             السابق</button>}
+                    </div>
+                    <div>
+                        {currentPage > 1 && <button className='flex items-center py-2 px-4  rounded justify-center bg-yellow-600  gap-2 text-white' onClick={currentDatePage}
+                        >
+                           
+                            التاريخ الحالي</button>}
                     </div>
                     <div>
                         {currentPage < lastPage && <button className='flex items-center py-2 rounded justify-center bg-yellow-600 w-16 gap-2 text-white' onClick={nextPage}
