@@ -26,11 +26,6 @@ const months = [
 
 const weekdays = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
 
-
-
-
-
-
 const getHijriMonth = (date) => {
     const hijriDate = new Intl.DateTimeFormat('ar-TN-u-ca-islamic', {
         month: 'long',
@@ -41,7 +36,7 @@ const getHijriMonth = (date) => {
 
 const getHijriDay = (data) => {
     const hijriDay = data.toLocaleString('en-US-u-ca-islamic', {
-        day: 'numeric', month: 'long',weekday: 'long',year : 'numeric'
+        day: 'numeric', month: 'long', weekday: 'long', year: 'numeric'
     });
     return parseInt(hijriDay);
 };
@@ -91,13 +86,20 @@ function Calendar({ visible, setVisible, setCurrentPage }) {
     </>
 }
 export default function Home() {
-
     const [currentDate, setCurrentDate] = useState(new Date("2023-07-20"));
+    const [initlize, setInitlize] = useState(true)
     const lastPage = 379;
-    const hijirMonth = getHijriMonth(currentDate);
-    const hijriDay = moment().iDate()
-    const [currentPage, setCurrentPage] = useState(pageIndex[hijirMonth] + hijriDay);
+    const [currentPage, setCurrentPage] = useState(1);
     const [visible, setVisible] = useState(false);
+    useEffect(() => {
+        if (initlize) {
+            const hijirMonth = getHijriMonth(currentDate);
+            const hijriDay = moment().iDate()
+            setCurrentPage(pageIndex[hijirMonth] + hijriDay)
+            setInitlize(false)
+        }
+
+    })
     const previousPage = () => {
         setCurrentPage(currentPage - 1);
     };
@@ -131,7 +133,7 @@ export default function Home() {
                             "جمادى الأولى",
                             "جمادي الآخرة"].map((month, index) => {
                                 return <button key={index} onClick={() => {
-                                    setCurrentPage(pageIndex[month])
+                                    setCurrentPage(pageIndex[month]+1)
                                 }} className='relative'>
                                     <Image src="/hijri/border.png" alt={month} width="229" height="140" />
                                     <p className='text-sm text-center absloute right-0 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'>{month}</p>
@@ -152,7 +154,7 @@ export default function Home() {
                                 "ذو القعدة",
                                 "ذو الحجة"].map((month, index) => {
                                     return <button key={index} onClick={() => {
-                                        setCurrentPage(pageIndex[month])
+                                        setCurrentPage(pageIndex[month] + 1)
                                     }} className='relative' >
                                         <Image src="/hijri/border.png" alt={month} width="229" height="140" />
                                         <p className='text-sm text-center absloute right-0 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 '>{month}</p>
@@ -170,15 +172,6 @@ export default function Home() {
                             <FaArrowRight />
                             السابق</button>}
                     </div>
-                    {/* <div>
-                    <button onClick={() => {
-                        setVisible(!visible);
-                    }} className='flex items-center py-2 justify-center rounded w-28 gap-2 overflow-hidden bg-red-100'>
-                        <FaCalendarAlt />
-                        الإنتقال السريع
-
-                    </button>
-                </div> */}
                     <div>
                         {currentPage < lastPage && <button className='flex items-center py-2 rounded justify-center bg-yellow-600 w-16 gap-2 text-white' onClick={nextPage}
                         >
@@ -193,18 +186,6 @@ export default function Home() {
             <footer className='px-4'>
                 <Image src="/hijri/last.png" alt='معلومات الدائرة وأرقام التواصل' width="1885" height="150" />
             </footer>
-            {/* <Calendar visible={visible} setVisible={setVisible} setCurrentPage={setCurrentPage} /> */}
-            {/* <div className='relative overflow-hidden'>
-                <div className='absolute top-0 right-0 h-full w-full'>
-                    <div className='flex flex-col items-center  h-full w-full justify-center'>
-                        <img className='border shadow flex h-32 w-32 items-center justify-center' title="page" src={`hijri/pages/${currentPage.toString().padStart(3, 0)}`} />
-                    </div>
-                </div>
-                <Image src="/hijri/body.png" width={1536} height={721} />
-            </div> */}
-
-            {/* <Image src="/hijri/footer.png" width={1536} height={165} /> */}
-
         </div>
     );
-}
+} 
