@@ -3,57 +3,9 @@ import { useEffect, useState } from 'react';
 import Image from 'next/image'
 
 import React from 'react';
-import moment from 'moment-hijri';
+import moment from 'moment';
 import { FaWhatsapp, FaTwitter, FaTimes, FaInstagram, FaPhone, FaEnvelope, FaArrowLeft, FaArrowRight, FaFilePdf, FaCalendarAlt } from 'react-icons/fa';
-
-
-
-
-const months = [
-    "محرم",
-    "صفر",
-    "ربيع الأول",
-    "ربيع الآخر",
-    "جمادى الأولى",
-    "جمادي الآخرة",
-    "رجب",
-    "شعبان",
-    "رمضان",
-    "شوال",
-    "ذو القعدة",
-    "ذو الحجة"
-]
-
-const weekdays = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
-
-const getHijriMonth = (date) => {
-    const hijriDate = new Intl.DateTimeFormat('ar-TN-u-ca-islamic', {
-        month: 'long',
-    }).format(date);
-
-    return hijriDate;
-};
-
-const getHijriDay = (data) => {
-    const hijriDay = data.toLocaleString('en-US-u-ca-islamic', {
-        day: 'numeric', month: 'long', weekday: 'long', year: 'numeric'
-    });
-    return parseInt(hijriDay);
-};
-const pageIndex = {
-    "محرم": 3,
-    "صفر": 35,
-    "ربيع الأول": 66,
-    "ربيع الآخر": 98,
-    "جمادى الأولى": 130,
-    "جمادي الآخرة": 161,
-    "رجب": 193,
-    "شعبان": 224,
-    "رمضان": 256,
-    "شوال": 287,
-    "ذو القعدة": 318,
-    "ذو الحجة": 350
-};
+import useSWR from 'swr'
 
 
 function Calendar({ visible, setVisible, setCurrentPage }) {
@@ -85,59 +37,40 @@ function Calendar({ visible, setVisible, setCurrentPage }) {
         </div>
     </>
 }
-export default function Home() {
-    const [currentDate, setCurrentDate] = useState(new Date());
-    const [initlize, setInitlize] = useState(true)
+
+function formatDate(date) {
+  return moment(date).format('DD/MM/YYYY')
+}
+
+const fetcher = (...args) => fetch(...args).then(res => res.json())
+export default function Page() {
+    const [date, setDate] = useState(moment());
     const lastPage = 379;
-    const [currentPage, setCurrentPage] = useState(1);
-    const [visible, setVisible] = useState(false);
-    const [hijirMonth, setHijirMonth] = useState(getHijriMonth(currentDate))
-    useEffect(() => {
-        if (initlize) {
-            const currentHijriMonth = getHijriMonth(new Date(currentDate.getTime() - 86400000));
-            console.log(currentHijriMonth)
-            setHijirMonth(currentHijriMonth);
-            const hijriDay = moment().iDate()
-            setCurrentPage(pageIndex[hijirMonth] + hijriDay)
-            setInitlize(false)
-        }
-
-    })
-
-    function getMonthName(numberPage) {
-        for (const month in pageIndex) {
-            const pageStart = pageIndex[month];
-            const nextPageStart = pageIndex[Object.keys(pageIndex)[Object.keys(pageIndex).indexOf(month) + 1]];
+    const { data, error, isLoading } = useSWR(`dates?date=${formatDate(date)}`, fetcher)
     
-            if (numberPage >= pageStart && numberPage < nextPageStart) {
-                return month;
-            }
-        }
-        
-        return "Unknown"; // If numberPage is not within any known month range
-    }
-
     const previousPage = () => {
-        setCurrentPage(currentPage - 1);
-        setHijirMonth(getMonthName(currentPage-1))
+      setDate(date.subtract(1, 'days'))
     };
+
     const currentDatePage = () => {
-        const currentHijriMonth = getHijriMonth(new Date());
-        setHijirMonth(currentHijriMonth);
-        const hijriDay = moment().iDate()
-        setCurrentPage(pageIndex[currentHijriMonth] + hijriDay)
+      setDate(moment())
     }
 
     const nextPage = () => {
-        setCurrentPage(currentPage + 1);
-        setHijirMonth(getMonthName(currentPage+1))
+      setDate(date.add(1, 'days'))
     };
 
+    const monthStartDates = {
+      'محرم': '19/07/2023','صفر': '18/08/2023','ربيع الأول': '16/09/2023', 'ربيع الآخر': '16/10/2023', 'جمادى الأولى': '15/11/2023', 'جمادى الآخرة': '14/12/2023',
+      'رجب': '13/01/2024', 'شعبان': '11/02/2024', 'رمضان': '12/03/2024', 'شوال': "10/04/2024", "ذو القعدة": "09/05/2024", "ذو الحجة": '08/06/2024'
+    }
 
-
+    if (isLoading){
+      return <>الرجاء الإنتظار</>
+    }
     return (
         <div className='min-h-screen flex flex-col gap-8 container mx-auto background'>
-            <header className='px-4 py-8'>
+             <header className='px-4 py-8'>
                 <div className='flex flex-col items-center gap-4'>
                     <div>
                         <Image width="80" alt="دائرة الشؤون الإسلامية" height="541" src="/hijri/logo1.png" />
@@ -161,17 +94,17 @@ export default function Home() {
                                     setCurrentPage(pageIndex[month]+1)
                                     setHijirMonth(getMonthName(pageIndex[month]+1))
                                 }} className='relative'>
-                                    <Image src={`/hijri/border${month === hijirMonth ? "_active":''}.png`} alt={month} width="229" height="140" />
-                                    <p className={`text-sm text-center absloute right-0 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${month === hijirMonth ? "text-red-500" : ''}`}>{month}</p>
+                                    <Image src={`/hijri/border${data.month === month ? "_active":''}.png`} alt={month} width="229" height="140" />
+                                    <p className={`text-sm text-center absloute right-0 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${month === data.month ? "text-red-500" : ''}`}>{month}</p>
                                 </button>
                             })}
 
                     </div>
                     <div className='flex flex-col justify-center'>
-                        <img width="667px" height="785px" className='border w-full shadow flex items-center justify-center' alt="page" src={`hijri/pages/${currentPage.toString().padStart(3, 0)}`} />
+                        <img width="667px" height="785px" className='border w-full shadow flex items-center justify-center' alt="page" src={isLoading ? "" : data.page.url} />
                     </div>
                     <div className=''>
-                        <div className=' flex flex-col gap-2 justify-center'>
+                        {/* <div className=' flex flex-col gap-2 justify-center'>
                             {[
                                 "رجب",
                                 "شعبان",
@@ -188,25 +121,25 @@ export default function Home() {
                                     </button>
                                 })}
 
-                        </div>
+                        </div> */}
 
                     </div>
                 </div>
                 <div className='flex justify-between gap-2'>
                     <div>
-                        {currentPage > 1 && <button className='flex items-center py-2 rounded justify-center bg-yellow-600 w-16 gap-2 text-white' onClick={previousPage}
+                        {data.page.number > 1 && <button className='flex items-center py-2 rounded justify-center bg-yellow-600 w-16 gap-2 text-white' onClick={previousPage}
                         >
                             <FaArrowRight />
                             السابق</button>}
                     </div>
                     <div>
-                        {currentPage > 1 && <button className='flex items-center py-2 px-4  rounded justify-center bg-yellow-600  gap-2 text-white' onClick={currentDatePage}
+                        {data.page.number > 1 && <button className='flex items-center py-2 px-4  rounded justify-center bg-yellow-600  gap-2 text-white' onClick={currentDatePage}
                         >
                            
                             التاريخ الحالي</button>}
                     </div>
                     <div>
-                        {currentPage < lastPage && <button className='flex items-center py-2 rounded justify-center bg-yellow-600 w-16 gap-2 text-white' onClick={nextPage}
+                        {data.page.number < lastPage && <button className='flex items-center py-2 rounded justify-center bg-yellow-600 w-16 gap-2 text-white' onClick={nextPage}
                         >
                             التالي
                             <FaArrowLeft />
