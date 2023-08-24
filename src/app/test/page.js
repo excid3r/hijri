@@ -39,38 +39,87 @@ function Calendar({ visible, setVisible, setCurrentPage }) {
 }
 
 function formatDate(date) {
-  return moment(date).format('DD/MM/YYYY')
+    return moment(date).format('DD/MM/YYYY')
 }
 
 const fetcher = (...args) => fetch(...args).then(res => res.json())
+
+const dayNames = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"]
+
+function Month({ name, setDate, selectedDate }) {
+    const { data, error, isLoading } = useSWR(`calendar?month=${name}`, fetcher)
+    if (isLoading) {
+        return "الرجاء الإنتظار"
+    }
+    console.log(data.monthNames)
+    return (
+        <div className='inline-flex flex-col gap-4 mt-6'>
+            <div className='flex items-center justify-between'>
+                <h1 className='text-2xl font-bold'>{name}</h1>
+                <div className='flex gap-2 text-sm'>
+                    <p>
+                        {data.monthNames.join(" - ")}
+                    </p>
+                    <ul>{data.years.map((month) => {
+                        return <li>{month}</li>
+                    })}</ul>
+                </div>
+
+            </div>
+            <table>
+                <div className='grid grid-cols-7 gap-2'>
+                    {dayNames.map(day => {
+                        return <h2>{day}</h2>
+                    })}
+                </div>
+                <div className='grid grid-cols-7 gap-2'>
+                    {data.shiftedSortedDate.map((date) => {
+                        if (!date) {
+                            return <div></div>
+                        }
+                        return <button onClick={()=>{
+                            const dateString = date.gregorian
+                            const format = 'DD/MM/YYYY';
+
+                            const momentObject = moment(dateString, format);
+
+                            setDate(momentObject)
+                        }}><div className={`flex flex-col border mb-1 items-center ${date.gregorian === selectedDate ? "border-2 border-black" : ''}`}><span className='font-bold'>{date.day}</span><span className='text-sm'>{date.gday}</span></div></button>
+                    })}
+                </div>
+            </table>
+        </div>
+    )
+}
+
 export default function Page() {
     const [date, setDate] = useState(moment());
     const lastPage = 379;
     const { data, error, isLoading } = useSWR(`dates?date=${formatDate(date)}`, fetcher)
-    
+
     const previousPage = () => {
-      setDate(date.subtract(1, 'days'))
+        setDate(date.subtract(1, 'days'))
     };
 
     const currentDatePage = () => {
-      setDate(moment())
+        setDate(moment())
     }
 
     const nextPage = () => {
-      setDate(date.add(1, 'days'))
+        setDate(date.add(1, 'days'))
     };
 
     const monthStartDates = {
-      'محرم': '19/07/2023','صفر': '18/08/2023','ربيع الأول': '16/09/2023', 'ربيع الآخر': '16/10/2023', 'جمادى الأولى': '15/11/2023', 'جمادى الآخرة': '14/12/2023',
-      'رجب': '13/01/2024', 'شعبان': '11/02/2024', 'رمضان': '12/03/2024', 'شوال': "10/04/2024", "ذو القعدة": "09/05/2024", "ذو الحجة": '08/06/2024'
+        'محرم': '19/07/2023', 'صفر': '18/08/2023', 'ربيع الأول': '16/09/2023', 'ربيع الآخر': '16/10/2023', 'جمادى الأولى': '15/11/2023', 'جمادى الآخرة': '14/12/2023',
+        'رجب': '13/01/2024', 'شعبان': '11/02/2024', 'رمضان': '12/03/2024', 'شوال': "10/04/2024", "ذو القعدة": "09/05/2024", "ذو الحجة": '08/06/2024'
     }
 
-    if (isLoading){
-      return <>الرجاء الإنتظار</>
+    if (isLoading) {
+        return <>الرجاء الإنتظار</>
     }
     return (
         <div className='min-h-screen flex flex-col gap-8 container mx-auto background'>
-             <header className='px-4 py-8'>
+            <header className='px-4 py-8'>
                 <div className='flex flex-col items-center gap-4'>
                     <div>
                         <Image width="80" alt="دائرة الشؤون الإسلامية" height="541" src="/hijri/logo1.png" />
@@ -89,12 +138,16 @@ export default function Page() {
                             "ربيع الأول",
                             "ربيع الآخر",
                             "جمادى الأولى",
-                            "جمادي الآخرة"].map((month, index) => {
+                            "جمادى الآخرة"].map((month, index) => {
                                 return <button key={index} onClick={() => {
-                                    setCurrentPage(pageIndex[month]+1)
-                                    setHijirMonth(getMonthName(pageIndex[month]+1))
+                                    const dateString = monthStartDates[month]
+                                    const format = 'DD/MM/YYYY';
+
+                                    const momentObject = moment(dateString, format);
+
+                                    setDate(momentObject)
                                 }} className='relative'>
-                                    <Image src={`/hijri/border${data.month === month ? "_active":''}.png`} alt={month} width="229" height="140" />
+                                    <Image src={`/hijri/border${data.month === month ? "_active" : ''}.png`} alt={month} width="229" height="140" />
                                     <p className={`text-sm text-center absloute right-0 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${month === data.month ? "text-red-500" : ''}`}>{month}</p>
                                 </button>
                             })}
@@ -104,7 +157,7 @@ export default function Page() {
                         <img width="667px" height="785px" className='border w-full shadow flex items-center justify-center' alt="page" src={isLoading ? "" : data.page.url} />
                     </div>
                     <div className=''>
-                        {/* <div className=' flex flex-col gap-2 justify-center'>
+                        <div className=' flex flex-col gap-2 justify-center'>
                             {[
                                 "رجب",
                                 "شعبان",
@@ -113,15 +166,19 @@ export default function Page() {
                                 "ذو القعدة",
                                 "ذو الحجة"].map((month, index) => {
                                     return <button key={index} onClick={() => {
-                                        setCurrentPage(pageIndex[month] + 1)
-                                        setHijirMonth(getMonthName(pageIndex[month]+1))
+                                        const dateString = monthStartDates[month]
+                                        const format = 'DD/MM/YYYY';
+
+                                        const momentObject = moment(dateString, format);
+
+                                        setDate(momentObject)
                                     }} className='relative' >
-                                    <Image src={`/hijri/border${month === hijirMonth ? "_active":''}.png`} alt={month} width="229" height="140" />
-                                    <p className={`text-sm text-center absloute right-0 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${month === hijirMonth ? "text-red-500" : ''}`}>{month}</p>
+                                        <Image src={`/hijri/border${month === data.month ? "_active" : ''}.png`} alt={month} width="229" height="140" />
+                                        <p className={`text-sm text-center absloute right-0 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${month === data.month ? "text-red-500" : ''}`}>{month}</p>
                                     </button>
                                 })}
 
-                        </div> */}
+                        </div>
 
                     </div>
                 </div>
@@ -135,7 +192,7 @@ export default function Page() {
                     <div>
                         {data.page.number > 1 && <button className='flex items-center py-2 px-4  rounded justify-center bg-yellow-600  gap-2 text-white' onClick={currentDatePage}
                         >
-                           
+
                             التاريخ الحالي</button>}
                     </div>
                     <div>
@@ -147,7 +204,7 @@ export default function Page() {
                     </div>
 
                 </div>
-
+                <Month name={data.month} selectedDate={data.gregorian} setDate={setDate} />
             </main>
             <footer className='px-4'>
                 <Image src="/hijri/last.png" alt='معلومات الدائرة وأرقام التواصل' width="1885" height="150" />
