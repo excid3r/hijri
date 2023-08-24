@@ -60,24 +60,24 @@ function Month({ name, setDate, selectedDate }) {
                     <p>
                         {data.monthNames.join(" - ")}
                     </p>
-                    <ul>{data.years.map((month) => {
-                        return <li>{month}</li>
+                    <ul>{data.years.map((month, i) => {
+                        return <li key={i}>{month}</li>
                     })}</ul>
                 </div>
 
             </div>
             <table>
                 <div className='grid grid-cols-7 gap-2'>
-                    {dayNames.map(day => {
-                        return <h2>{day}</h2>
+                    {dayNames.map(day, i => {
+                        return <h2 key={i}>{day}</h2>
                     })}
                 </div>
                 <div className='grid grid-cols-7 gap-2'>
-                    {data.shiftedSortedDate.map((date) => {
+                    {data.shiftedSortedDate.map((date, i) => {
                         if (!date) {
-                            return <div></div>
+                            return <div key={i}></div>
                         }
-                        return <button onClick={()=>{
+                        return <button key={i} onClick={()=>{
                             const dateString = date.gregorian
                             const format = 'DD/MM/YYYY';
 
