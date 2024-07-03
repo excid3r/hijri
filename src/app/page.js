@@ -95,31 +95,27 @@ function Month({ name, setDate, selectedDate }) {
 export default function Page() {
     const [date, setDate] = useState(moment('2024-07-07'));
     const lastPage = 379;
-    const { data, error, isLoading } = useSWR(`hijri/dates?date=${formatDate(date)}`, fetcher)
-console.log(date)
+    const { data, error, isLoading } = useSWR(`hijri/dates?date=${formatDate(date)}`, fetcher);
+
     const previousPage = () => {
-        setDate(date.clone().subtract(1, 'days'))
+        setDate(date.clone().subtract(1, 'days'));
     };
 
     const currentDatePage = () => {
-        setDate(moment())
-    }
+        setDate(moment());
+    };
 
     const nextPage = () => {
-        
-        setDate(date.clone().add(1, 'days'))
+        setDate(date.clone().add(1, 'days'));
     };
 
     const monthStartDates = {
         'محرم': '7/07/2024', 'صفر': '6/08/2024', 'ربيع الأول': '4/09/2024', 'ربيع الآخر': '4/10/2024', 'جمادى الأولى': '3/11/2024', 'جمادى الآخرة': '2/12/2024',
         'رجب': '1/01/2025', 'شعبان': '31/01/2025', 'رمضان': '1/03/2025', 'شوال': "31/03/2025", "ذو القعدة": "29/04/2025", "ذو الحجة": '28/05/2025'
-    }
+    };
 
-    if (isLoading) {
-        return <>الرجاء الإنتظار</>
-    }
     return (
-        <div className='min-h-screen flex flex-col gap-8 container mx-auto background'>
+        <div className='min-h-screen flex flex-col gap-8 container mx-auto bg-[#f1f2f8]'>
             <header className='px-4 py-8'>
                 <div className='flex flex-col items-center gap-4'>
                     <div>
@@ -130,86 +126,98 @@ console.log(date)
                     </div>
                 </div>
             </header>
-            <main className='px-2 grow flex flex-col  gap-4'>
+            <main className='px-2 grow flex flex-col gap-4'>
                 <div className='flex gap-2'>
-                    <div className=' flex flex-col gap-2 justify-center'>
+                    <div className='flex flex-col gap-2 justify-center'>
                         {[
                             "محرم",
                             "صفر",
                             "ربيع الأول",
                             "ربيع الآخر",
                             "جمادى الأولى",
-                            "جمادى الآخرة"].map((month, index) => {
-                                return <button key={index} onClick={() => {
-                                    const dateString = monthStartDates[month]
-                                    const format = 'DD/MM/YYYY';
-
-                                    const momentObject = moment(dateString, format);
-
-                                    setDate(momentObject)
-                                }} className='relative'>
-                                    <Image src={`/hijri/border${data.month === month ? "_active" : ''}.png`} alt={month} width="229" height="140" />
-                                    <p className={`text-sm text-center absloute right-0 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${month === data.month ? "text-red-500" : ''}`}>{month}</p>
-                                </button>
-                            })}
-
+                            "جمادى الآخرة"
+                        ].map((month, index) => (
+                            <button key={index} onClick={() => {
+                                const dateString = monthStartDates[month];
+                                const format = 'DD/MM/YYYY';
+                                const momentObject = moment(dateString, format);
+                                setDate(momentObject);
+                            }} className='relative'>
+                                <Image src={`/hijri/border.png?key=1`} alt={month} width="229" height="140" />
+                                {isLoading ? "" : (
+                                    <p className={`text-sm text-center absolute font-bold top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${month === data.month ? "text-red-500" : ''}`}>
+                                        {month}
+                                    </p>
+                                )}
+                            </button>
+                        ))}
                     </div>
                     <div className='flex flex-col justify-center'>
-                        <img width="667px" height="785px" className='border w-full shadow flex items-center justify-center' alt="page" src={isLoading ? "" : data.page.url} />
-                    </div>
-                    <div className=''>
-                        <div className=' flex flex-col gap-2 justify-center'>
-                            {[
-                                "رجب",
-                                "شعبان",
-                                "رمضان",
-                                "شوال",
-                                "ذو القعدة",
-                                "ذو الحجة"].map((month, index) => {
-                                    return <button key={index} onClick={() => {
-                                        const dateString = monthStartDates[month]
-                                        const format = 'DD/MM/YYYY';
-
-                                        const momentObject = moment(dateString, format);
-
-                                        setDate(momentObject)
-                                    }} className='relative' >
-                                        <Image src={`/hijri/border${month === data.month ? "_active" : ''}.png`} alt={month} width="229" height="140" />
-                                        <p className={`text-sm text-center absloute right-0 absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${month === data.month ? "text-red-500" : ''}`}>{month}</p>
-                                    </button>
-                                })}
-
+                        <div className="aspect-w-2 aspect-h-3 border shadow flex items-center justify-center">
+                            {isLoading ? (
+                                <div className='w-full h-full flex items-center justify-center'>
+                                    <span>Loading...</span>
+                                </div>
+                            ) : (
+                                <img className='border w-full shadow flex items-center justify-center' alt="page" src={data.page.url} />
+                            )}
                         </div>
-
+                    </div>
+                    <div className='flex flex-col gap-2 justify-center'>
+                        {[
+                            "رجب",
+                            "شعبان",
+                            "رمضان",
+                            "شوال",
+                            "ذو القعدة",
+                            "ذو الحجة"
+                        ].map((month, index) => (
+                            <button key={index} onClick={() => {
+                                const dateString = monthStartDates[month];
+                                const format = 'DD/MM/YYYY';
+                                const momentObject = moment(dateString, format);
+                                setDate(momentObject);
+                            }} className='relative'>
+                                <Image src={`/hijri/border.png?key=1`} alt={month} width="229" height="140" />
+                                {isLoading ? "" : (
+                                    <p className={`text-sm text-center font-bold absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ${month === data.month ? "text-red-500" : ''}`}>
+                                        {month}
+                                    </p>
+                                )}
+                            </button>
+                        ))}
                     </div>
                 </div>
                 <div className='flex justify-between gap-2'>
                     <div>
-                        {data.page.number > 1 && <button className='flex items-center py-2 rounded justify-center bg-yellow-600 w-16 gap-2 text-white' onClick={previousPage}
-                        >
-                            <FaArrowRight />
-                            السابق</button>}
+                        {data && data.page.number > 1 && (
+                            <button className='flex items-center py-2 rounded justify-center font-bold bg-[#bf3632] w-16 gap-2 text-white' onClick={previousPage}>
+                                السابق
+                            </button>
+                        )}
                     </div>
                     <div>
-                        {/* {data.page.number > 1 && <button className='flex items-center py-2 px-4  rounded justify-center bg-yellow-600  gap-2 text-white' onClick={currentDatePage}
-                        >
-
-                            التاريخ الحالي</button>} */}
+                        {/* Uncomment this if you want to show the current date page button */}
+                        {/* {data && data.page.number > 1 && (
+                            <button className='flex items-center py-2 px-4 rounded justify-center bg-yellow-600 gap-2 text-white' onClick={currentDatePage}>
+                                التاريخ الحالي
+                            </button>
+                        )} */}
                     </div>
                     <div>
-                        {data.page.number < lastPage && <button className='flex items-center py-2 rounded justify-center bg-yellow-600 w-16 gap-2 text-white' onClick={nextPage}
-                        >
-                            التالي
-                            <FaArrowLeft />
-                        </button>}
+                        {data && data.page.number < lastPage && (
+                            <button className='flex items-center py-2 rounded justify-center font-bold bg-[#bf3632] w-16 gap-2 text-white' onClick={nextPage}>
+                                التالي
+                            </button>
+                        )}
                     </div>
-
                 </div>
-                {/* <Month name={data.month} selectedDate={data.gregorian} setDate={setDate} /> */}
+                {/* Uncomment this if you want to show the Month component */}
+                {/* <Month name={data ? data.month : ''} selectedDate={data ? data.gregorian : ''} setDate={setDate} /> */}
             </main>
             <footer className='px-4'>
                 <Image src="/hijri/last.png" alt='معلومات الدائرة وأرقام التواصل' width="1885" height="150" />
             </footer>
         </div>
     );
-} 
+}
