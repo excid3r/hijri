@@ -49,11 +49,13 @@ const index = {
 
 export async function GET(request) {
   const gregorian = request.nextUrl.searchParams.get("date");
+  
   const date = await prisma.date.findUnique({
     where: {
       gregorian,
     },
   });
+  console.log(date)
   const { day, month } = parseHijriDate(date.hijri);
   console.log(parseHijriDate(date.hijri))
   const number = index[month] + day

@@ -39,7 +39,7 @@ function Calendar({ visible, setVisible, setCurrentPage }) {
 }
 
 function formatDate(date) {
-    return moment(date).format('DD/MM/YYYY')
+    return moment(date).format('M/D/YYYY')
 }
 
 const fetcher = (...args) => fetch(...args).then(res => res.json())
@@ -79,7 +79,7 @@ function Month({ name, setDate, selectedDate }) {
                         }
                         return <button key={i} onClick={()=>{
                             const dateString = date.gregorian
-                            const format = 'DD/MM/YYYY';
+                            const format = 'M/D/YYYY';
 
                             const momentObject = moment(dateString, format);
 
@@ -93,10 +93,10 @@ function Month({ name, setDate, selectedDate }) {
 }
 
 export default function Page() {
-    const [date, setDate] = useState(moment());
+    const [date, setDate] = useState(moment('2024-07-07'));
     const lastPage = 379;
     const { data, error, isLoading } = useSWR(`hijri/dates?date=${formatDate(date)}`, fetcher)
-
+console.log(date)
     const previousPage = () => {
         setDate(date.clone().subtract(1, 'days'))
     };
@@ -111,8 +111,8 @@ export default function Page() {
     };
 
     const monthStartDates = {
-        'محرم': '19/07/2023', 'صفر': '18/08/2023', 'ربيع الأول': '16/09/2023', 'ربيع الآخر': '16/10/2023', 'جمادى الأولى': '15/11/2023', 'جمادى الآخرة': '14/12/2023',
-        'رجب': '13/01/2024', 'شعبان': '11/02/2024', 'رمضان': '12/03/2024', 'شوال': "10/04/2024", "ذو القعدة": "09/05/2024", "ذو الحجة": '08/06/2024'
+        'محرم': '7/07/2024', 'صفر': '6/08/2024', 'ربيع الأول': '4/09/2024', 'ربيع الآخر': '4/10/2024', 'جمادى الأولى': '3/11/2024', 'جمادى الآخرة': '2/12/2024',
+        'رجب': '1/01/2025', 'شعبان': '31/01/2025', 'رمضان': '1/03/2025', 'شوال': "31/03/2025", "ذو القعدة": "29/04/2025", "ذو الحجة": '28/05/2025'
     }
 
     if (isLoading) {
@@ -126,7 +126,7 @@ export default function Page() {
                         <Image width="80" alt="دائرة الشؤون الإسلامية" height="541" src="/hijri/logo1.png" />
                     </div>
                     <div>
-                        <Image src="/hijri/app-logo.png" alt="التقويم الهجري ١٥٥٥" width="150" height="300" />
+                        <Image src="/hijri/app-logo.png?id=1" key={1} alt="التقويم الهجري ١٥٥٥" width="150" height="300" />
                     </div>
                 </div>
             </header>
@@ -191,10 +191,10 @@ export default function Page() {
                             السابق</button>}
                     </div>
                     <div>
-                        {data.page.number > 1 && <button className='flex items-center py-2 px-4  rounded justify-center bg-yellow-600  gap-2 text-white' onClick={currentDatePage}
+                        {/* {data.page.number > 1 && <button className='flex items-center py-2 px-4  rounded justify-center bg-yellow-600  gap-2 text-white' onClick={currentDatePage}
                         >
 
-                            التاريخ الحالي</button>}
+                            التاريخ الحالي</button>} */}
                     </div>
                     <div>
                         {data.page.number < lastPage && <button className='flex items-center py-2 rounded justify-center bg-yellow-600 w-16 gap-2 text-white' onClick={nextPage}
@@ -205,7 +205,7 @@ export default function Page() {
                     </div>
 
                 </div>
-                <Month name={data.month} selectedDate={data.gregorian} setDate={setDate} />
+                {/* <Month name={data.month} selectedDate={data.gregorian} setDate={setDate} /> */}
             </main>
             <footer className='px-4'>
                 <Image src="/hijri/last.png" alt='معلومات الدائرة وأرقام التواصل' width="1885" height="150" />

@@ -1,6 +1,6 @@
 import './globals.css'
-import { Amiri } from "next/font/google";
-const amiri = Amiri({ weight: ["400", "700"], subsets: ["arabic"] });
+import { Amiri, Tajawal } from "next/font/google";
+const amiri = Tajawal({ weight: ["400", "700"], subsets: ["arabic"] });
 
 export const metadata = {
   title: 'التقويم الهجري ١٤٤٤ - دائرة الشؤون الإسلامية بالشارقة',
